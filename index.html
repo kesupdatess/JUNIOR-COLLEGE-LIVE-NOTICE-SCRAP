@@ -3,49 +3,110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Junior College Notices</title>
+<title>Junior College Notices | KES Updates</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+  :root { --primary: #2563eb; --bg: #f8fafc; --card: #fff; --text: #0f172a; --muted: #64748b; --border: #e2e8f0; --danger: #dc2626; }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-  body { background: #f8fafc; color: #0f172a; padding: 20px; max-width: 800px; margin: 0 auto; }
-  .header { text-align: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #2563eb; }
-  .header h1 { color: #1e40af; font-size: 1.5rem; }
-  .header p { color: #64748b; font-size: 0.9rem; margin-top: 5px; }
+  body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 40px; }
+  
+  .top-bar { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(12px); }
+  .top-bar-brand { font-weight: 800; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+  .top-bar-actions { display: flex; gap: 8px; align-items: center; }
+  
+  .live-badge { background: var(--danger); color: #fff; font-size: .7rem; font-weight: 700; padding: 4px 10px; border-radius: 99px; display: flex; align-items: center; gap: 5px; }
+  .live-dot { width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+  
+  .refresh-btn { padding: 7px 14px; background: #eff6ff; border: 1px solid var(--border); border-radius: 8px; font-size: .8rem; font-weight: 600; cursor: pointer; color: var(--primary); transition: all .15s; }
+  .refresh-btn:hover { background: var(--primary); color: #fff; }
+
+  .container { max-width: 800px; margin: 0 auto; padding: 20px 16px; }
+  .page-header { text-align: center; margin-bottom: 24px; padding: 20px 0; }
+  .page-header h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 6px; color: #1e40af; }
+  .page-header p { color: var(--muted); font-size: .9rem; }
+
+  .stats-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .stat-chip { background: var(--card); border: 1px solid var(--border); border-radius: 99px; padding: 6px 14px; font-size: .8rem; font-weight: 600; color: var(--muted); }
+  .stat-chip strong { color: var(--primary); }
+
   .search-box { margin-bottom: 20px; }
-  .search-box input { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem; outline: none; }
-  .search-box input:focus { border-color: #2563eb; }
-  .notice-list { list-style: none; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; }
-  .notice-item { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 12px; align-items: baseline; }
+  .search-box input { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; font-size: .9rem; outline: none; background: var(--card); }
+  .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+
+  .notice-section { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+  .notice-section h2 { font-size: 1rem; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  
+  .notice-list { list-style: none; }
+  .notice-item { padding: 14px 0; border-bottom: 1px solid #f1f5f9; display: flex; align-items: baseline; gap: 14px; transition: background .2s; }
   .notice-item:last-child { border-bottom: none; }
-  .notice-item:hover { background: #eff6ff; }
-  .notice-tag { font-size: 0.7rem; font-weight: 700; color: #2563eb; background: #eff6ff; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
-  .notice-title a { color: #1e293b; text-decoration: none; font-size: 0.95rem; font-weight: 600; }
-  .notice-title a:hover { color: #2563eb; text-decoration: underline; }
-  .loading, .empty { text-align: center; padding: 40px; color: #64748b; }
-  .fallback { background: #fee2e2; color: #991b1b; padding: 15px; border-radius: 8px; text-align: center; margin-top: 15px; display: none; }
-  .fallback a { color: #dc2626; font-weight: 700; }
+  .notice-item:hover { background: #eff6ff; margin: 0 -12px; padding-left: 12px; padding-right: 12px; border-radius: 8px; }
+  
+  .notice-tag { font-size: .7rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+  .tag-pdf { background: rgba(220,38,38,.1); color: var(--danger); }
+  .tag-new { background: rgba(37,99,235,.1); color: var(--primary); }
+  
+  .notice-title a { color: #1e293b; text-decoration: none; font-size: .95rem; font-weight: 600; line-height: 1.4; }
+  .notice-title a:hover { color: var(--primary); text-decoration: underline; }
+
+  .loading, .empty { text-align: center; padding: 40px; color: var(--muted); font-size: .9rem; }
+  
+  .fallback { background: #fee2e2; border: 1px solid #fecaca; color: var(--danger); padding: 15px; border-radius: 8px; text-align: center; margin-top: 15px; display: none; font-size: .88rem; font-weight: 600; }
+  .fallback a { color: var(--danger); text-decoration: underline; font-weight: 700; }
+
+  .footer-note { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 20px; padding: 14px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; }
+  .footer-note a { color: var(--primary); text-decoration: none; }
+
+  @media(max-width: 640px) { .notice-item { flex-direction: column; gap: 4px; } }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>🏫 Junior College Notices</h1>
-  <p>Live updates from kesjrsanghvi.com</p>
+<div class="top-bar">
+  <div class="top-bar-brand"><span>🏫</span><span>Junior College Notices</span></div>
+  <div class="top-bar-actions">
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <button class="refresh-btn" onclick="loadNotices()">🔄 Refresh</button>
+  </div>
 </div>
 
-<div class="search-box">
-  <input type="text" id="searchInput" placeholder="🔍 Search notices..." oninput="filterNotices()">
-</div>
+<div class="container">
+  <div class="page-header">
+    <h1> KES Junior College</h1>
+    <p>Live notices from kesjrsanghvi.com • Auto-updates every 5 minutes</p>
+  </div>
 
-<ul id="noticeList" class="notice-list">
-  <li class="loading">Fetching notices...</li>
-</ul>
+  <div class="stats-bar">
+    <div class="stat-chip">Total: <strong id="stat-total">0</strong></div>
+    <div class="stat-chip">PDFs: <strong id="stat-pdfs">0</strong></div>
+    <div class="stat-chip">Links: <strong id="stat-links">0</strong></div>
+  </div>
 
-<div id="fallbackBox" class="fallback">
-  ⚠️ Live fetch failed. <a href="https://kesjrsanghvi.com/enotices/" target="_blank">Click here to open official site</a>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="🔍 Search notices by title..." oninput="filterNotices()">
+  </div>
+
+  <div class="notice-section">
+    <h2>📋 Latest Notices</h2>
+    <ul id="noticeList" class="notice-list">
+      <li class="loading">Fetching latest notices...</li>
+    </ul>
+  </div>
+
+  <div id="fallbackBox" class="fallback">
+    ⚠️ Live fetch failed. <a href="https://kesjrsanghvi.com/enotices/" target="_blank">Click here to open official site</a>
+  </div>
+
+  <div class="footer-note">
+    🌐 Source: <a href="https://kesjrsanghvi.com/enotices/" target="_blank">kesjrsanghvi.com/enotices</a> • 
+    Last updated: <span id="last-updated">—</span>
+  </div>
 </div>
 
 <script>
+// ═══════════════════════════════════════════════════════
+// CONFIG (Same Proxies as Degree College)
+// ══════════════════════════════════════════════════════
 const JUNIOR_URL = 'https://kesjrsanghvi.com/enotices/';
 const PROXIES = [
   'https://corsproxy.io/?',
@@ -55,84 +116,104 @@ const PROXIES = [
 
 let allNotices = [];
 
+// ═══════════════════════════════════════════════════════
+// MAIN LOADER (Smart Regex + Error Handling)
+// ═══════════════════════════════════════════════════════
 async function loadNotices() {
   const list = document.getElementById('noticeList');
   const fallback = document.getElementById('fallbackBox');
+  
+  fallback.style.display = 'none';
+  list.innerHTML = '<li class="loading">🔄 Fetching from KES Junior College...</li>';
 
   for (const proxy of PROXIES) {
     try {
       const res = await fetch(proxy + encodeURIComponent(JUNIOR_URL));
-      if (!res.ok) continue;
+      if (!res.ok) { console.warn(`Proxy failed (${proxy}): ${res.status}`); continue; }
       
       const htmlText = await res.text();
       if (!htmlText || htmlText.length < 100) continue;
 
-      // Safe Regex (No 100ms loop error)
-      const matches = htmlText.match(/<a[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g) || [];
+      // 🔥 SMART REGEX: Catches PDFs, Docs, and standard links
+      const regex = /<a\s+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+      const matches = [...htmlText.matchAll(regex)];
+      
       const notices = [];
       const seen = new Set();
 
-      for (let i = 0; i < matches.length; i++) {
-        const match = matches[i];
-        const hrefMatch = match.match(/href="([^"]+)"/);
-        const titleMatch = match.match(/>([\s\S]*?)<\/a>/);
-        
-        if (!hrefMatch || !titleMatch) continue;
-        
-        const href = hrefMatch[1].trim();
-        const title = titleMatch[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+      for (const match of matches) {
+        const href = match[1].trim();
+        const title = match[2].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 
+        // Basic filters
         if (!title || title.length < 5 || seen.has(title)) continue;
-        if (href === '#' || href.startsWith('javascript:')) continue;
+        if (href === '#' || href.startsWith('javascript:') || href.startsWith('mailto:')) continue;
+        if (title.toLowerCase().includes('home') || title.toLowerCase().includes('menu') || title.toLowerCase().includes('login')) continue;
 
-        // Filter relevant notices
-        const isRelevant = href.includes('.pdf') || href.includes('.doc') || 
+        // Relevance filter (Notice board keywords)
+        const isRelevant = 
+          href.includes('.pdf') || href.includes('.doc') || href.includes('.docx') ||
           title.toLowerCase().includes('notice') || title.toLowerCase().includes('circular') || 
           title.toLowerCase().includes('admission') || title.toLowerCase().includes('result') ||
           title.toLowerCase().includes('exam') || title.toLowerCase().includes('fees') ||
-          title.toLowerCase().includes('list') || title.toLowerCase().includes('updated');
+          title.toLowerCase().includes('list') || title.toLowerCase().includes('updated') ||
+          title.toLowerCase().includes('roll call') || title.toLowerCase().includes('merit');
 
         if (isRelevant) {
           seen.add(title);
           notices.push({
             title,
             href: href.startsWith('http') ? href : new URL(href, JUNIOR_URL).href,
-            isPdf: href.includes('.pdf')
+            isPdf: href.includes('.pdf') || href.includes('.doc')
           });
         }
-        if (notices.length >= 30) break;
+        if (notices.length >= 30) break; // Limit to 30 notices
       }
 
       if (notices.length > 0) {
         allNotices = notices;
         renderNotices();
-        return;
+        updateStats();
+        document.getElementById('last-updated').textContent = new Date().toLocaleTimeString('en-IN');
+        return; // Success! Stop trying other proxies
       }
-    } catch (e) {
-      console.warn('Proxy failed:', proxy);
+    } catch (err) {
+      console.warn(`Proxy failed: ${proxy}`, err.message);
+      continue;
     }
   }
 
   // All proxies failed
-  list.innerHTML = '<li class="empty">Unable to fetch notices automatically.</li>';
+  list.innerHTML = '<li class="empty"> Unable to fetch notices automatically</li>';
   fallback.style.display = 'block';
 }
 
+// ═══════════════════════════════════════════════════════
+// RENDER & SEARCH
+// ══════════════════════════════════════════════════════
 function renderNotices(filtered = null) {
   const list = document.getElementById('noticeList');
   const data = filtered || allNotices;
 
   if (data.length === 0) {
-    list.innerHTML = '<li class="empty">No notices found</li>';
+    list.innerHTML = '<li class="empty">🔍 No notices match your search</li>';
     return;
   }
 
-  list.innerHTML = data.map(n => `
-    <li class="notice-item">
-      <span class="notice-tag">${n.isPdf ? '📄 PDF' : '🔗 Link'}</span>
-      <div class="notice-title"><a href="${n.href}" target="_blank" rel="noopener">${n.title}</a></div>
-    </li>
-  `).join('');
+  list.innerHTML = data.map((n, i) => {
+    const tag = n.isPdf 
+      ? '<span class="notice-tag tag-pdf">📄 PDF</span>' 
+      : (i < 3 ? '<span class="notice-tag tag-new">✨ NEW</span>' : '');
+    
+    return `
+      <li class="notice-item">
+        <span class="notice-tag" style="background:#f1f5f9;color:#64748b">${i < 3 ? '🔴 New' : '📋 Notice'}</span>
+        <div class="notice-title">
+          <a href="${n.href}" target="_blank" rel="noopener">${n.title} ${tag}</a>
+        </div>
+      </li>
+    `;
+  }).join('');
 }
 
 function filterNotices() {
@@ -142,8 +223,17 @@ function filterNotices() {
   renderNotices(filtered);
 }
 
-// Load on start
+function updateStats() {
+  document.getElementById('stat-total').textContent = allNotices.length;
+  document.getElementById('stat-pdfs').textContent = allNotices.filter(n => n.isPdf).length;
+  document.getElementById('stat-links').textContent = allNotices.filter(n => !n.isPdf).length;
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
 loadNotices();
+setInterval(loadNotices, 300000); // Auto-refresh every 5 minutes
 </script>
 
 </body>
