@@ -1,12 +1,250 @@
-rror
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Junior College Notices | KES Updates</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --primary: #2563eb; --bg: #f8fafc; --card: #fff; --text: #0f172a; --muted: #64748b; --border: #e2e8f0; --danger: #dc2626; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+  body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 40px; }
+  
+  .top-bar { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(12px); }
+  .top-bar-brand { font-weight: 800; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+  .top-bar-actions { display: flex; gap: 8px; align-items: center; }
+  
+  .live-badge { background: var(--danger); color: #fff; font-size: .7rem; font-weight: 700; padding: 4px 10px; border-radius: 99px; display: flex; align-items: center; gap: 5px; }
+  .live-dot { width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+  
+  .refresh-btn { padding: 7px 14px; background: #eff6ff; border: 1px solid var(--border); border-radius: 8px; font-size: .8rem; font-weight: 600; cursor: pointer; color: var(--primary); transition: all .15s; }
+  .refresh-btn:hover { background: var(--primary); color: #fff; }
 
-Unhandled Promise Rejection: Error: Preview stopped: a loop ran longer than 100ms — check for an infinite loop.
-    at loadNotices (index.html:127:86)
+  .container { max-width: 800px; margin: 0 auto; padding: 20px 16px; }
+  .page-header { text-align: center; margin-bottom: 24px; padding: 20px 0; }
+  .page-header h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 6px; color: #1e40af; }
+  .page-header p { color: var(--muted); font-size: .9rem; }
 
-Console
-(1)
-1
+  .stats-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .stat-chip { background: var(--card); border: 1px solid var(--border); border-radius: 99px; padding: 6px 14px; font-size: .8rem; font-weight: 600; color: var(--muted); }
+  .stat-chip strong { color: var(--primary); }
 
+  .search-box { margin-bottom: 20px; }
+  .search-box input { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; font-size: .9rem; outline: none; background: var(--card); }
+  .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
 
-Unhandled Promise Rejection: Error: Preview stopped: a loop ran longer than 100ms — check for an infinite loop.
-    at loadNotices (index.html:127:86)
+  .notice-section { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+  .notice-section h2 { font-size: 1rem; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  
+  .notice-list { list-style: none; }
+  .notice-item { padding: 16px 0; border-bottom: 1px solid #f1f5f9; transition: background .2s; }
+  .notice-item:last-child { border-bottom: none; }
+  .notice-item:hover { background: #eff6ff; margin: 0 -12px; padding-left: 12px; padding-right: 12px; border-radius: 8px; }
+  
+  .notice-title { font-size: 1rem; font-weight: 700; color: #1e293b; margin-bottom: 6px; line-height: 1.4; }
+  .notice-desc { font-size: .88rem; color: var(--muted); line-height: 1.5; margin-bottom: 10px; }
+  .notice-link { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: var(--primary); color: #fff; text-decoration: none; border-radius: 8px; font-size: .85rem; font-weight: 600; transition: all .15s; }
+  .notice-link:hover { background: #1e40af; transform: translateY(-1px); }
+
+  .loading, .empty { text-align: center; padding: 40px; color: var(--muted); font-size: .9rem; }
+  
+  .fallback { background: #fee2e2; border: 1px solid #fecaca; color: var(--danger); padding: 15px; border-radius: 8px; text-align: center; margin-top: 15px; display: none; font-size: .88rem; font-weight: 600; }
+  .fallback a { color: var(--danger); text-decoration: underline; font-weight: 700; }
+
+  .footer-note { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 20px; padding: 14px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; }
+  .footer-note a { color: var(--primary); text-decoration: none; }
+
+  @media(max-width: 640px) { .page-header h1 { font-size: 1.4rem; } }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-brand"><span>🏫</span><span>Junior College Notices</span></div>
+  <div class="top-bar-actions">
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <button class="refresh-btn" onclick="loadNotices()">🔄 Refresh</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="page-header">
+    <h1>🏫 KES Junior College</h1>
+    <p>Live notices from kesjrsanghvi.com • Auto-updates every 5 minutes</p>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-chip">Total: <strong id="stat-total">0</strong></div>
+    <div class="stat-chip">With PDF: <strong id="stat-pdfs">0</strong></div>
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="🔍 Search notices by title..." oninput="filterNotices()">
+  </div>
+
+  <div class="notice-section">
+    <h2>📋 Latest Notices</h2>
+    <ul id="noticeList" class="notice-list">
+      <li class="loading">Fetching latest notices...</li>
+    </ul>
+  </div>
+
+  <div id="fallbackBox" class="fallback">
+    ⚠️ Live fetch failed. <a href="https://kesjrsanghvi.com/enotices/" target="_blank">Click here to open official site</a>
+  </div>
+
+  <div class="footer-note">
+    🌐 Source: <a href="https://kesjrsanghvi.com/enotices/" target="_blank">kesjrsanghvi.com/enotices</a> • 
+    Last updated: <span id="last-updated">—</span>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CONFIG - WordPress REST API (More Reliable)
+// ═══════════════════════════════════════════════════════
+const JUNIOR_API = 'https://kesjrsanghvi.com/wp-json/wp/v2/posts?per_page=50&_fields=id,title,content,date,link';
+const PROXIES = [
+  'https://corsproxy.io/?',
+  'https://api.allorigins.win/raw?url=',
+  'https://api.codetabs.com/v1/proxy?quest='
+];
+
+let allNotices = [];
+
+// ═══════════════════════════════════════════════════════
+// MAIN LOADER - Try WordPress API First
+// ═══════════════════════════════════════════════════════
+async function loadNotices() {
+  const list = document.getElementById('noticeList');
+  const fallback = document.getElementById('fallbackBox');
+  
+  fallback.style.display = 'none';
+  list.innerHTML = '<li class="loading">🔄 Fetching from KES Junior College...</li>';
+
+  // Try WordPress REST API first
+  for (const proxy of PROXIES) {
+    try {
+      const res = await fetch(proxy + encodeURIComponent(JUNIOR_API));
+      if (!res.ok) continue;
+      
+      const data = await res.json();
+      
+      if (!data || !Array.isArray(data) || data.length === 0) continue;
+
+      // Parse WordPress posts
+      allNotices = data.map(post => {
+        // Extract links from content
+        const content = post.content.rendered || '';
+        const linkMatch = content.match(/href="([^"]+)"/);
+        const attachment = linkMatch ? linkMatch[1] : null;
+        
+        return {
+          title: post.title.rendered || 'Untitled',
+          description: content.replace(/<[^>]+>/g, '').substring(0, 200),
+          attachment: attachment,
+          hasPdf: attachment && (attachment.includes('.pdf') || attachment.includes('.doc')),
+          date: new Date(post.date).toLocaleDateString('en-IN')
+        };
+      });
+
+      renderNotices();
+      updateStats();
+      document.getElementById('last-updated').textContent = new Date().toLocaleTimeString('en-IN');
+      return; // Success!
+
+    } catch (err) {
+      console.warn(`WordPress API failed with ${proxy}:`, err.message);
+      continue;
+    }
+  }
+
+  // If WordPress API fails, try JSON file
+  for (const proxy of PROXIES) {
+    try {
+      const res = await fetch(proxy + encodeURIComponent('https://kesjrsanghvi.com/notices/newsupdate.json'));
+      if (!res.ok) continue;
+      
+      const data = await res.json();
+      
+      if (!data || !Array.isArray(data) || data.length === 0) continue;
+
+      allNotices = data.map(item => ({
+        title: item.title || 'Untitled Notice',
+        description: item.description || '',
+        attachment: item.attachment || null,
+        hasPdf: item.attachment && (item.attachment.includes('.pdf') || item.attachment.includes('.doc'))
+      }));
+
+      renderNotices();
+      updateStats();
+      document.getElementById('last-updated').textContent = new Date().toLocaleTimeString('en-IN');
+      return; // Success!
+
+    } catch (err) {
+      console.warn(`JSON API failed with ${proxy}:`, err.message);
+      continue;
+    }
+  }
+
+  // All methods failed
+  list.innerHTML = '<li class="empty">❌ Unable to fetch notices automatically</li>';
+  fallback.style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER NOTICES
+// ═══════════════════════════════════════════════════════
+function renderNotices(filtered = null) {
+  const list = document.getElementById('noticeList');
+  const data = filtered || allNotices;
+
+  if (data.length === 0) {
+    list.innerHTML = '<li class="empty">🔍 No notices match your search</li>';
+    return;
+  }
+
+  list.innerHTML = data.map((n, i) => `
+    <li class="notice-item">
+      <div class="notice-title">${i + 1}. ${n.title}</div>
+      ${n.description ? `<div class="notice-desc">${n.description}</div>` : ''}
+      ${n.attachment ? `
+        <a href="${n.attachment}" target="_blank" rel="noopener" class="notice-link">
+          ${n.hasPdf ? '📄 View PDF' : '🔗 Open Document'} →
+        </a>
+      ` : ''}
+    </li>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// SEARCH / FILTER
+// ═══════════════════════════════════════════════════════
+function filterNotices() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  if (!q) { renderNotices(); return; }
+  const filtered = allNotices.filter(n => 
+    n.title.toLowerCase().includes(q) || 
+    n.description.toLowerCase().includes(q)
+  );
+  renderNotices(filtered);
+}
+
+// ═══════════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════════
+function updateStats() {
+  document.getElementById('stat-total').textContent = allNotices.length;
+  document.getElementById('stat-pdfs').textContent = allNotices.filter(n => n.hasPdf).length;
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+loadNotices();
+setInterval(loadNotices, 300000); // Auto-refresh every 5 minutes
+</script>
+
+</body>
+</html>
