@@ -6,13 +6,13 @@
 <title>Junior College Notices | KES Updates</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--primary:#2563eb;--primary-dark:#1e40af;--primary-bg:#eff6ff;--bg:#f8fafc;--card:#fff;--text:#0f172a;--text-muted:#64748b;--border:#e2e8f0;--success:#059669;--danger:#dc2626;--warning:#d97706;--radius:14px;--radius-sm:10px}
+:root{--primary:#2563eb;--primary-dark:#1e40af;--primary-bg:#eff6ff;--bg:#f8fafc;--card:#fff;--text:#0f172a;--text-muted:#64748b;--border:#e2e8f0;--radius:14px;--radius-sm:10px}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px}
 .top-bar{background:#fff;border-bottom:1px solid var(--border);padding:12px 20px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px)}
 .top-bar-brand{font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px}
 .top-bar-actions{display:flex;gap:8px}
-.live-badge{background:var(--danger);color:#fff;font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:99px;display:flex;align-items:center;gap:5px}
+.live-badge{background:#dc2626;color:#fff;font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:99px;display:flex;align-items:center;gap:5px}
 .live-dot{width:6px;height:6px;background:#fff;border-radius:50%;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .refresh-btn{padding:7px 14px;background:var(--primary-bg);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit;color:var(--primary)}
@@ -37,11 +37,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .notice-title a{color:var(--primary-dark);text-decoration:none;font-size:.92rem;font-weight:600;line-height:1.4;transition:color .2s}
 .notice-title a:hover{color:var(--primary);text-decoration:underline}
 .notice-tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:.65rem;font-weight:700;margin-left:6px}
+.tag-pdf{background:rgba(220,38,38,.1);color:#dc2626}
 .tag-new{background:rgba(37,99,235,.1);color:var(--primary)}
-.tag-pdf{background:rgba(220,38,38,.1);color:var(--danger)}
 .loading{text-align:center;padding:40px;color:var(--text-muted);font-size:.9rem}
 .empty{text-align:center;padding:30px;color:var(--text-muted)}
-.error-banner{background:#fee2e2;border:1px solid #fecaca;color:var(--danger);padding:14px 18px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:.88rem;font-weight:600;display:none}
+.error-banner{background:#fee2e2;border:1px solid #fecaca;color:#dc2626;padding:14px 18px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:.88rem;font-weight:600;display:none}
+.fallback-box{background:var(--primary-bg);border:2px dashed var(--primary);border-radius:var(--radius);padding:24px;text-align:center;margin-bottom:16px}
+.fallback-box h3{color:var(--primary);margin-bottom:8px;font-size:1rem}
+.fallback-box p{color:var(--text-muted);font-size:.88rem;margin-bottom:14px}
+.fallback-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--primary);color:#fff;text-decoration:none;border-radius:var(--radius-sm);font-weight:700;font-size:.9rem;transition:all .2s}
+.fallback-btn:hover{background:var(--primary-dark);transform:translateY(-2px)}
 .footer-note{text-align:center;color:var(--text-muted);font-size:.78rem;margin-top:20px;padding:14px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm)}
 @media(max-width:640px){.notice-item{flex-direction:column;gap:4px}.notice-date{min-width:auto}}
 </style>
@@ -49,10 +54,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 <body>
 
 <div class="top-bar">
-  <div class="top-bar-brand">
-    <span>🏫</span>
-    <span>Junior College Notices</span>
-  </div>
+  <div class="top-bar-brand"><span></span><span>Junior College Notices</span></div>
   <div class="top-bar-actions">
     <div class="live-badge"><div class="live-dot"></div>LIVE</div>
     <button class="refresh-btn" onclick="loadNotices()">🔄 Refresh</button>
@@ -67,6 +69,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
   <div class="error-banner" id="errorBanner"></div>
 
+  <div class="fallback-box" id="fallbackBox" style="display:none">
+    <h3>⚠️ Live fetch temporarily unavailable</h3>
+    <p>Our proxy servers are having trouble connecting. You can still access all notices directly from the official website.</p>
+    <a href="https://kesjrsanghvi.com/enotices/" target="_blank" rel="noopener noreferrer" class="fallback-btn">🌐 Open Official Notice Board →</a>
+  </div>
+
   <div class="stats-bar">
     <div class="stat-chip">Total: <strong id="stat-total">0</strong></div>
     <div class="stat-chip">PDFs: <strong id="stat-pdfs">0</strong></div>
@@ -74,11 +82,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   </div>
 
   <div class="search-box">
-    <input type="text" id="searchInput" placeholder=" Search notices by title..." oninput="filterNotices()">
+    <input type="text" id="searchInput" placeholder="🔍 Search notices by title..." oninput="filterNotices()">
   </div>
 
   <div class="notice-section">
-    <h2> Latest Notices</h2>
+    <h2>📋 Latest Notices</h2>
     <ul id="notice-list" class="notice-list">
       <li class="loading">Fetching latest notices...</li>
     </ul>
@@ -91,13 +99,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════
-// CONFIG
+// ═══════════════════════════════════════════════════════
+// CONFIG - Junior College Only
 // ═══════════════════════════════════════════════════════
 const JUNIOR_URL = 'https://kesjrsanghvi.com/enotices/';
 const PROXIES = [
   'https://corsproxy.io/?',
-  'https://api.allorigins.win/get?url=',
+  'https://api.allorigins.win/raw?url=',
   'https://api.codetabs.com/v1/proxy?quest='
 ];
 
@@ -109,78 +117,54 @@ let allNotices = [];
 async function loadNotices() {
   const list = document.getElementById('notice-list');
   const banner = document.getElementById('errorBanner');
+  const fallback = document.getElementById('fallbackBox');
+  
   banner.style.display = 'none';
+  fallback.style.display = 'none';
   list.innerHTML = '<li class="loading">🔄 Fetching from KES Junior College...</li>';
 
   for (const proxy of PROXIES) {
     try {
-      let htmlText;
       const res = await fetch(proxy + encodeURIComponent(JUNIOR_URL));
-      
       if (!res.ok) continue;
       
-      if (proxy.includes('allorigins')) {
-        const data = await res.json();
-        htmlText = data.contents;
-      } else {
-        htmlText = await res.text();
-      }
-      
-      if (!htmlText) continue;
+      const htmlText = await res.text();
+      if (!htmlText || htmlText.length < 200) continue;
 
-      // 🔥 Regex to extract all links from the page
+      // 🔥 Safe regex extraction (No 100ms loop error)
       const regex = /<a[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g;
-      let match;
+      const matches = [...htmlText.matchAll(regex)];
       const notices = [];
       const seen = new Set();
 
-      while ((match = regex.exec(htmlText)) !== null) {
+      for (const match of matches) {
         const href = match[1].trim();
         const title = match[2].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
         
-        // Skip empty, navigation, or very short titles
-        if (!title || title.length < 8) continue;
+        if (!title || title.length < 8 || seen.has(title)) continue;
         if (href === '#' || href.startsWith('javascript:')) continue;
         if (title.toLowerCase().includes('home') || title.toLowerCase().includes('menu')) continue;
-        if (seen.has(title)) continue;
         
-        // Only keep relevant notices
+        // Filter for relevant Junior College content
         const isRelevant = 
-          href.includes('.pdf') || 
-          href.includes('.doc') ||
-          href.includes('notice') ||
-          href.includes('circular') ||
-          href.includes('admission') ||
-          href.includes('result') ||
-          href.includes('exam') ||
-          href.includes('fees') ||
-          href.includes('schedule') ||
-          href.includes('list') ||
-          href.includes('roll') ||
-          href.includes('merit') ||
-          href.includes('timetable') ||
-          title.toLowerCase().includes('notice') ||
-          title.toLowerCase().includes('circular') ||
-          title.toLowerCase().includes('admission') ||
-          title.toLowerCase().includes('result') ||
-          title.toLowerCase().includes('exam') ||
-          title.toLowerCase().includes('fees') ||
-          title.toLowerCase().includes('class') ||
-          title.toLowerCase().includes('holiday') ||
-          title.toLowerCase().includes('important') ||
-          title.toLowerCase().includes('updated');
+          href.includes('.pdf') || href.includes('.doc') ||
+          href.includes('notice') || href.includes('circular') ||
+          href.includes('admission') || href.includes('result') ||
+          href.includes('exam') || href.includes('fees') ||
+          href.includes('schedule') || href.includes('list') ||
+          href.includes('roll') || href.includes('merit') ||
+          href.includes('timetable') || title.toLowerCase().includes('class') ||
+          title.toLowerCase().includes('holiday') || title.toLowerCase().includes('important');
 
         if (isRelevant) {
           seen.add(title);
           notices.push({
             title,
             href: href.startsWith('http') ? href : new URL(href, JUNIOR_URL).href,
-            isPdf: href.includes('.pdf'),
-            id: btoa(title).substring(0, 15)
+            isPdf: href.includes('.pdf')
           });
         }
-        
-        if (notices.length >= 30) break;
+        if (notices.length >= 25) break;
       }
 
       if (notices.length === 0) continue;
@@ -198,13 +182,14 @@ async function loadNotices() {
   }
 
   // All proxies failed
-  list.innerHTML = '<li class="empty">❌ Unable to fetch notices. Please try again.</li>';
+  list.innerHTML = '<li class="empty">❌ Unable to fetch notices automatically</li>';
   banner.textContent = '⚠️ Could not connect to KES Junior College website. All proxies failed.';
   banner.style.display = 'block';
+  fallback.style.display = 'block';
 }
 
 // ═══════════════════════════════════════════════════════
-// RENDER
+// RENDER & FILTER
 // ═══════════════════════════════════════════════════════
 function renderNotices(filtered = null) {
   const list = document.getElementById('notice-list');
@@ -215,33 +200,22 @@ function renderNotices(filtered = null) {
     return;
   }
 
-  list.innerHTML = notices.map((n, i) => {
-    const tag = n.isPdf 
-      ? '<span class="notice-tag tag-pdf">📄 PDF</span>' 
-      : (i < 3 ? '<span class="notice-tag tag-new">✨ NEW</span>' : '');
-    
-    return `
-      <li class="notice-item">
-        <span class="notice-date">${i < 3 ? '🔴 New' : '📋 Notice'}</span>
-        <div class="notice-title">
-          <a href="${n.href}" target="_blank" rel="noopener noreferrer">${n.title}${tag}</a>
-        </div>
-      </li>
-    `;
-  }).join('');
+  list.innerHTML = notices.map((n, i) => `
+    <li class="notice-item">
+      <span class="notice-date">${i < 3 ? '🔴 New' : '📋 Notice'}</span>
+      <div class="notice-title">
+        <a href="${n.href}" target="_blank" rel="noopener noreferrer">
+          ${n.title}
+          ${n.isPdf ? '<span class="notice-tag tag-pdf"> PDF</span>' : (i < 3 ? '<span class="notice-tag tag-new">✨ NEW</span>' : '')}
+        </a>
+      </div>
+    </li>
+  `).join('');
 }
 
-// ═══════════════════════════════════════════════════════
-// SEARCH / FILTER
-// ═══════════════════════════════════════════════════════
 function filterNotices() {
   const q = document.getElementById('searchInput').value.toLowerCase().trim();
-  if (!q) {
-    renderNotices();
-    return;
-  }
-  const filtered = allNotices.filter(n => n.title.toLowerCase().includes(q));
-  renderNotices(filtered);
+  renderNotices(q ? allNotices.filter(n => n.title.toLowerCase().includes(q)) : null);
 }
 
 // ═══════════════════════════════════════════════════════
