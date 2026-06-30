@@ -8,10 +8,95 @@
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-H7KVLBY669"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-H7KVLBY669');
+// ═══════════════════════════════════════════════════════
+// 🆕 SMART JUNIOR COLLEGE NOTICES SCRAPER
+// ═══════════════════════════════════════════════════════
+const JUNIOR_JSON_URL = 'https://kesjrsanghvi.com/notices/newsupdate.json';
+const JUNIOR_PROXIES = [
+  'https://corsproxy.io/?',
+  'https://api.allorigins.win/raw?url=',
+  'https://api.codetabs.com/v1/proxy?quest='
+];
+
+async function loadJuniorNotices() {
+  const container = document.getElementById('junior-live-notices');
+  if (!container) return;
+
+  for (const proxy of JUNIOR_PROXIES) {
+    try {
+      const res = await fetch(proxy + encodeURIComponent(JUNIOR_JSON_URL));
+      if (!res.ok) continue;
+      
+      const data = await res.json();
+      
+      if (!data || !Array.isArray(data) || data.length === 0) continue;
+
+      // 🔥 SMART PARSING - Extract actual notice titles
+      const notices = data.slice(0, 20).map(item => {
+        // Try to get best title from available fields
+        let title = item.title || '';
+        let description = item.description || '';
+        let attachment = item.attachment || '';
+        
+        // If title is generic like "JUNIOR COLLEGE", use description instead
+        if (title.toUpperCase() === 'JUNIOR COLLEGE' || title.length < 10) {
+          // Try to extract title from description
+          if (description && description.length > 10) {
+            title = description.split('.')[0].trim(); // First sentence
+          }
+          // Or extract from attachment URL
+          else if (attachment) {
+            const urlParts = attachment.split('/');
+            const fileName = urlParts[urlParts.length - 1];
+            title = fileName.replace(/\.pdf$/i, '').replace(/[-_]/g, ' ').trim();
+          }
+        }
+        
+        // Clean up title
+        title = title.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+        
+        return {
+          title: title || 'Notice',
+          description: description.replace(/<[^>]+>/g, '').substring(0, 150),
+          attachment: attachment,
+          hasPdf: attachment && (attachment.includes('.pdf') || attachment.includes('.doc'))
+        };
+      }).filter(n => n.title !== 'Notice' && n.title.length > 5); // Remove empty/generic notices
+
+      if (notices.length === 0) continue;
+
+      // Remove duplicates
+      const uniqueNotices = [];
+      const seen = new Set();
+      for (const n of notices) {
+        if (!seen.has(n.title)) {
+          seen.add(n.title);
+          uniqueNotices.push(n);
+        }
+      }
+
+      container.innerHTML = uniqueNotices.slice(0, 15).map(n => `
+        <li class="kes-live-item">
+          <span class="kes-live-date">${n.hasPdf ? '📄 PDF' : '🔗 Link'}</span>
+          <div class="kes-live-title">
+            <a href="${n.attachment || '#'}" target="_blank" rel="noopener noreferrer">${n.title}</a>
+          </div>
+        </li>
+      `).join('');
+
+      return; // Success!
+
+    } catch (err) {
+      console.warn(`Junior Proxy failed: ${proxy}`, err.message);
+      continue;
+    }
+  }
+
+  container.innerHTML = `<li class="kes-loading">Unable to load notices. <button onclick="loadJuniorNotices()" style="background:none;border:none;color:var(--primary);cursor:pointer;text-decoration:underline;">Retry</button></li>`;
+}
+
+loadJuniorNotices();
+setInterval(loadJuniorNotices, 300000);
 </script>
 
 <meta property="og:title" content="KES Updates | Student Portal">
