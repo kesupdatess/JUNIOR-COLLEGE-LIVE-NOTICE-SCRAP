@@ -3,105 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Junior College Notices | KES Updates</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Junior College Notices</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--primary:#2563eb;--primary-dark:#1e40af;--primary-bg:#eff6ff;--bg:#f8fafc;--card:#fff;--text:#0f172a;--text-muted:#64748b;--border:#e2e8f0;--radius:14px;--radius-sm:10px}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px}
-.top-bar{background:#fff;border-bottom:1px solid var(--border);padding:12px 20px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px)}
-.top-bar-brand{font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px}
-.top-bar-actions{display:flex;gap:8px}
-.live-badge{background:#dc2626;color:#fff;font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:99px;display:flex;align-items:center;gap:5px}
-.live-dot{width:6px;height:6px;background:#fff;border-radius:50%;animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.refresh-btn{padding:7px 14px;background:var(--primary-bg);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit;color:var(--primary)}
-.refresh-btn:hover{background:var(--primary);color:#fff}
-.container{max-width:800px;margin:0 auto;padding:20px 16px}
-.page-header{text-align:center;margin-bottom:24px;padding:20px 0}
-.page-header h1{font-size:1.8rem;font-weight:800;margin-bottom:6px}
-.page-header p{color:var(--text-muted);font-size:.9rem}
-.stats-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
-.stat-chip{background:#fff;border:1px solid var(--border);border-radius:99px;padding:6px 14px;font-size:.8rem;font-weight:600;color:var(--text-muted)}
-.stat-chip strong{color:var(--primary)}
-.search-box{margin-bottom:20px}
-.search-box input{width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.9rem;font-family:inherit;background:#fff}
-.search-box input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-.notice-section{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
-.notice-section h2{font-size:1rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.notice-list{list-style:none}
-.notice-item{padding:14px 0;border-bottom:1px solid var(--border);display:flex;align-items:baseline;gap:14px;transition:background .2s}
-.notice-item:last-child{border-bottom:none}
-.notice-item:hover{background:var(--primary-bg);margin:0 -12px;padding-left:12px;padding-right:12px;border-radius:8px}
-.notice-date{font-size:.75rem;color:var(--text-muted);min-width:110px;font-weight:500;white-space:nowrap}
-.notice-title a{color:var(--primary-dark);text-decoration:none;font-size:.92rem;font-weight:600;line-height:1.4;transition:color .2s}
-.notice-title a:hover{color:var(--primary);text-decoration:underline}
-.notice-tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:.65rem;font-weight:700;margin-left:6px}
-.tag-pdf{background:rgba(220,38,38,.1);color:#dc2626}
-.tag-new{background:rgba(37,99,235,.1);color:var(--primary)}
-.loading{text-align:center;padding:40px;color:var(--text-muted);font-size:.9rem}
-.empty{text-align:center;padding:30px;color:var(--text-muted)}
-.error-banner{background:#fee2e2;border:1px solid #fecaca;color:#dc2626;padding:14px 18px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:.88rem;font-weight:600;display:none}
-.fallback-box{background:var(--primary-bg);border:2px dashed var(--primary);border-radius:var(--radius);padding:24px;text-align:center;margin-bottom:16px}
-.fallback-box h3{color:var(--primary);margin-bottom:8px;font-size:1rem}
-.fallback-box p{color:var(--text-muted);font-size:.88rem;margin-bottom:14px}
-.fallback-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--primary);color:#fff;text-decoration:none;border-radius:var(--radius-sm);font-weight:700;font-size:.9rem;transition:all .2s}
-.fallback-btn:hover{background:var(--primary-dark);transform:translateY(-2px)}
-.footer-note{text-align:center;color:var(--text-muted);font-size:.78rem;margin-top:20px;padding:14px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm)}
-@media(max-width:640px){.notice-item{flex-direction:column;gap:4px}.notice-date{min-width:auto}}
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+  body { background: #f8fafc; color: #0f172a; padding: 20px; max-width: 800px; margin: 0 auto; }
+  .header { text-align: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #2563eb; }
+  .header h1 { color: #1e40af; font-size: 1.5rem; }
+  .header p { color: #64748b; font-size: 0.9rem; margin-top: 5px; }
+  .search-box { margin-bottom: 20px; }
+  .search-box input { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem; outline: none; }
+  .search-box input:focus { border-color: #2563eb; }
+  .notice-list { list-style: none; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; }
+  .notice-item { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 12px; align-items: baseline; }
+  .notice-item:last-child { border-bottom: none; }
+  .notice-item:hover { background: #eff6ff; }
+  .notice-tag { font-size: 0.7rem; font-weight: 700; color: #2563eb; background: #eff6ff; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+  .notice-title a { color: #1e293b; text-decoration: none; font-size: 0.95rem; font-weight: 600; }
+  .notice-title a:hover { color: #2563eb; text-decoration: underline; }
+  .loading, .empty { text-align: center; padding: 40px; color: #64748b; }
+  .fallback { background: #fee2e2; color: #991b1b; padding: 15px; border-radius: 8px; text-align: center; margin-top: 15px; display: none; }
+  .fallback a { color: #dc2626; font-weight: 700; }
 </style>
 </head>
 <body>
 
-<div class="top-bar">
-  <div class="top-bar-brand"><span></span><span>Junior College Notices</span></div>
-  <div class="top-bar-actions">
-    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
-    <button class="refresh-btn" onclick="loadNotices()">🔄 Refresh</button>
-  </div>
+<div class="header">
+  <h1>🏫 Junior College Notices</h1>
+  <p>Live updates from kesjrsanghvi.com</p>
 </div>
 
-<div class="container">
-  <div class="page-header">
-    <h1>🏫 KES Junior College</h1>
-    <p>Live notices from kesjrsanghvi.com • Auto-updates every 5 minutes</p>
-  </div>
+<div class="search-box">
+  <input type="text" id="searchInput" placeholder="🔍 Search notices..." oninput="filterNotices()">
+</div>
 
-  <div class="error-banner" id="errorBanner"></div>
+<ul id="noticeList" class="notice-list">
+  <li class="loading">Fetching notices...</li>
+</ul>
 
-  <div class="fallback-box" id="fallbackBox" style="display:none">
-    <h3>⚠️ Live fetch temporarily unavailable</h3>
-    <p>Our proxy servers are having trouble connecting. You can still access all notices directly from the official website.</p>
-    <a href="https://kesjrsanghvi.com/enotices/" target="_blank" rel="noopener noreferrer" class="fallback-btn">🌐 Open Official Notice Board →</a>
-  </div>
-
-  <div class="stats-bar">
-    <div class="stat-chip">Total: <strong id="stat-total">0</strong></div>
-    <div class="stat-chip">PDFs: <strong id="stat-pdfs">0</strong></div>
-    <div class="stat-chip">Links: <strong id="stat-links">0</strong></div>
-  </div>
-
-  <div class="search-box">
-    <input type="text" id="searchInput" placeholder="🔍 Search notices by title..." oninput="filterNotices()">
-  </div>
-
-  <div class="notice-section">
-    <h2>📋 Latest Notices</h2>
-    <ul id="notice-list" class="notice-list">
-      <li class="loading">Fetching latest notices...</li>
-    </ul>
-  </div>
-
-  <div class="footer-note">
-    🌐 Source: <a href="https://kesjrsanghvi.com/enotices/" target="_blank" style="color:var(--primary);text-decoration:none">kesjrsanghvi.com/enotices</a> • 
-    Last updated: <span id="last-updated">—</span>
-  </div>
+<div id="fallbackBox" class="fallback">
+  ⚠️ Live fetch failed. <a href="https://kesjrsanghvi.com/enotices/" target="_blank">Click here to open official site</a>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-// CONFIG - Junior College Only
-// ═══════════════════════════════════════════════════════
 const JUNIOR_URL = 'https://kesjrsanghvi.com/enotices/';
 const PROXIES = [
   'https://corsproxy.io/?',
@@ -111,17 +55,9 @@ const PROXIES = [
 
 let allNotices = [];
 
-// ═══════════════════════════════════════════════════════
-// MAIN LOADER
-// ═══════════════════════════════════════════════════════
 async function loadNotices() {
-  const list = document.getElementById('notice-list');
-  const banner = document.getElementById('errorBanner');
+  const list = document.getElementById('noticeList');
   const fallback = document.getElementById('fallbackBox');
-  
-  banner.style.display = 'none';
-  fallback.style.display = 'none';
-  list.innerHTML = '<li class="loading">🔄 Fetching from KES Junior College...</li>';
 
   for (const proxy of PROXIES) {
     try {
@@ -129,32 +65,32 @@ async function loadNotices() {
       if (!res.ok) continue;
       
       const htmlText = await res.text();
-      if (!htmlText || htmlText.length < 200) continue;
+      if (!htmlText || htmlText.length < 100) continue;
 
-      // 🔥 Safe regex extraction (No 100ms loop error)
-      const regex = /<a[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g;
-      const matches = [...htmlText.matchAll(regex)];
+      // Safe Regex (No 100ms loop error)
+      const matches = htmlText.match(/<a[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g) || [];
       const notices = [];
       const seen = new Set();
 
-      for (const match of matches) {
-        const href = match[1].trim();
-        const title = match[2].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+      for (let i = 0; i < matches.length; i++) {
+        const match = matches[i];
+        const hrefMatch = match.match(/href="([^"]+)"/);
+        const titleMatch = match.match(/>([\s\S]*?)<\/a>/);
         
-        if (!title || title.length < 8 || seen.has(title)) continue;
+        if (!hrefMatch || !titleMatch) continue;
+        
+        const href = hrefMatch[1].trim();
+        const title = titleMatch[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+
+        if (!title || title.length < 5 || seen.has(title)) continue;
         if (href === '#' || href.startsWith('javascript:')) continue;
-        if (title.toLowerCase().includes('home') || title.toLowerCase().includes('menu')) continue;
-        
-        // Filter for relevant Junior College content
-        const isRelevant = 
-          href.includes('.pdf') || href.includes('.doc') ||
-          href.includes('notice') || href.includes('circular') ||
-          href.includes('admission') || href.includes('result') ||
-          href.includes('exam') || href.includes('fees') ||
-          href.includes('schedule') || href.includes('list') ||
-          href.includes('roll') || href.includes('merit') ||
-          href.includes('timetable') || title.toLowerCase().includes('class') ||
-          title.toLowerCase().includes('holiday') || title.toLowerCase().includes('important');
+
+        // Filter relevant notices
+        const isRelevant = href.includes('.pdf') || href.includes('.doc') || 
+          title.toLowerCase().includes('notice') || title.toLowerCase().includes('circular') || 
+          title.toLowerCase().includes('admission') || title.toLowerCase().includes('result') ||
+          title.toLowerCase().includes('exam') || title.toLowerCase().includes('fees') ||
+          title.toLowerCase().includes('list') || title.toLowerCase().includes('updated');
 
         if (isRelevant) {
           seen.add(title);
@@ -164,74 +100,50 @@ async function loadNotices() {
             isPdf: href.includes('.pdf')
           });
         }
-        if (notices.length >= 25) break;
+        if (notices.length >= 30) break;
       }
 
-      if (notices.length === 0) continue;
-
-      allNotices = notices;
-      renderNotices();
-      updateStats();
-      document.getElementById('last-updated').textContent = new Date().toLocaleTimeString('en-IN');
-      return;
-
-    } catch (err) {
-      console.warn(`Proxy failed: ${proxy}`, err.message);
-      continue;
+      if (notices.length > 0) {
+        allNotices = notices;
+        renderNotices();
+        return;
+      }
+    } catch (e) {
+      console.warn('Proxy failed:', proxy);
     }
   }
 
   // All proxies failed
-  list.innerHTML = '<li class="empty">❌ Unable to fetch notices automatically</li>';
-  banner.textContent = '⚠️ Could not connect to KES Junior College website. All proxies failed.';
-  banner.style.display = 'block';
+  list.innerHTML = '<li class="empty">Unable to fetch notices automatically.</li>';
   fallback.style.display = 'block';
 }
 
-// ═══════════════════════════════════════════════════════
-// RENDER & FILTER
-// ═══════════════════════════════════════════════════════
 function renderNotices(filtered = null) {
-  const list = document.getElementById('notice-list');
-  const notices = filtered || allNotices;
+  const list = document.getElementById('noticeList');
+  const data = filtered || allNotices;
 
-  if (notices.length === 0) {
-    list.innerHTML = '<li class="empty">🔍 No notices match your search</li>';
+  if (data.length === 0) {
+    list.innerHTML = '<li class="empty">No notices found</li>';
     return;
   }
 
-  list.innerHTML = notices.map((n, i) => `
+  list.innerHTML = data.map(n => `
     <li class="notice-item">
-      <span class="notice-date">${i < 3 ? '🔴 New' : '📋 Notice'}</span>
-      <div class="notice-title">
-        <a href="${n.href}" target="_blank" rel="noopener noreferrer">
-          ${n.title}
-          ${n.isPdf ? '<span class="notice-tag tag-pdf"> PDF</span>' : (i < 3 ? '<span class="notice-tag tag-new">✨ NEW</span>' : '')}
-        </a>
-      </div>
+      <span class="notice-tag">${n.isPdf ? '📄 PDF' : '🔗 Link'}</span>
+      <div class="notice-title"><a href="${n.href}" target="_blank" rel="noopener">${n.title}</a></div>
     </li>
   `).join('');
 }
 
 function filterNotices() {
   const q = document.getElementById('searchInput').value.toLowerCase().trim();
-  renderNotices(q ? allNotices.filter(n => n.title.toLowerCase().includes(q)) : null);
+  if (!q) { renderNotices(); return; }
+  const filtered = allNotices.filter(n => n.title.toLowerCase().includes(q));
+  renderNotices(filtered);
 }
 
-// ═══════════════════════════════════════════════════════
-// STATS
-// ═══════════════════════════════════════════════════════
-function updateStats() {
-  document.getElementById('stat-total').textContent = allNotices.length;
-  document.getElementById('stat-pdfs').textContent = allNotices.filter(n => n.isPdf).length;
-  document.getElementById('stat-links').textContent = allNotices.filter(n => !n.isPdf).length;
-}
-
-// ═══════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════
+// Load on start
 loadNotices();
-setInterval(loadNotices, 300000); // Auto-refresh every 5 minutes
 </script>
 
 </body>
