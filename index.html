@@ -101,8 +101,10 @@
 </div>
 
 <script>
-// CONFIG
-const JUNIOR_JSON_URL = 'https://kesjrsanghvi.com/notices/newsupdate.json';
+// ═══════════════════════════════════════════════════════
+// CONFIG - WordPress REST API (More Reliable)
+// ═══════════════════════════════════════════════════════
+const JUNIOR_API = 'https://kesjrsanghvi.com/wp-json/wp/v2/posts?per_page=50&_fields=id,title,content,date,link';
 const PROXIES = [
   'https://corsproxy.io/?',
   'https://api.allorigins.win/raw?url=',
@@ -111,7 +113,9 @@ const PROXIES = [
 
 let allNotices = [];
 
-// MAIN LOADER - SUPER SAFE VERSION
+// ═══════════════════════════════════════════════════════
+// MAIN LOADER - Try WordPress API First
+// ═══════════════════════════════════════════════════════
 async function loadNotices() {
   const list = document.getElementById('noticeList');
   const fallback = document.getElementById('fallbackBox');
@@ -119,17 +123,54 @@ async function loadNotices() {
   fallback.style.display = 'none';
   list.innerHTML = '<li class="loading">🔄 Fetching from KES Junior College...</li>';
 
+  // Try WordPress REST API first
   for (const proxy of PROXIES) {
     try {
-      const res = await fetch(proxy + encodeURIComponent(JUNIOR_JSON_URL));
+      const res = await fetch(proxy + encodeURIComponent(JUNIOR_API));
       if (!res.ok) continue;
       
       const data = await res.json();
       
       if (!data || !Array.isArray(data) || data.length === 0) continue;
 
-      // Parse JSON data - NO LOOPS, just map
-      allNotices = data.slice(0, 50).map(item => ({
+      // Parse WordPress posts
+      allNotices = data.map(post => {
+        // Extract links from content
+        const content = post.content.rendered || '';
+        const linkMatch = content.match(/href="([^"]+)"/);
+        const attachment = linkMatch ? linkMatch[1] : null;
+        
+        return {
+          title: post.title.rendered || 'Untitled',
+          description: content.replace(/<[^>]+>/g, '').substring(0, 200),
+          attachment: attachment,
+          hasPdf: attachment && (attachment.includes('.pdf') || attachment.includes('.doc')),
+          date: new Date(post.date).toLocaleDateString('en-IN')
+        };
+      });
+
+      renderNotices();
+      updateStats();
+      document.getElementById('last-updated').textContent = new Date().toLocaleTimeString('en-IN');
+      return; // Success!
+
+    } catch (err) {
+      console.warn(`WordPress API failed with ${proxy}:`, err.message);
+      continue;
+    }
+  }
+
+  // If WordPress API fails, try JSON file
+  for (const proxy of PROXIES) {
+    try {
+      const res = await fetch(proxy + encodeURIComponent('https://kesjrsanghvi.com/notices/newsupdate.json'));
+      if (!res.ok) continue;
+      
+      const data = await res.json();
+      
+      if (!data || !Array.isArray(data) || data.length === 0) continue;
+
+      allNotices = data.map(item => ({
         title: item.title || 'Untitled Notice',
         description: item.description || '',
         attachment: item.attachment || null,
@@ -142,17 +183,19 @@ async function loadNotices() {
       return; // Success!
 
     } catch (err) {
-      console.warn(`Proxy failed: ${proxy}`, err.message);
+      console.warn(`JSON API failed with ${proxy}:`, err.message);
       continue;
     }
   }
 
-  // All proxies failed
+  // All methods failed
   list.innerHTML = '<li class="empty">❌ Unable to fetch notices automatically</li>';
   fallback.style.display = 'block';
 }
 
-// RENDER NOTICES - NO LOOPS
+// ═══════════════════════════════════════════════════════
+// RENDER NOTICES
+// ═══════════════════════════════════════════════════════
 function renderNotices(filtered = null) {
   const list = document.getElementById('noticeList');
   const data = filtered || allNotices;
@@ -162,7 +205,7 @@ function renderNotices(filtered = null) {
     return;
   }
 
-  list.innerHTML = data.slice(0, 30).map((n, i) => `
+  list.innerHTML = data.map((n, i) => `
     <li class="notice-item">
       <div class="notice-title">${i + 1}. ${n.title}</div>
       ${n.description ? `<div class="notice-desc">${n.description}</div>` : ''}
@@ -175,7 +218,9 @@ function renderNotices(filtered = null) {
   `).join('');
 }
 
-// SEARCH - NO LOOPS
+// ═══════════════════════════════════════════════════════
+// SEARCH / FILTER
+// ═══════════════════════════════════════════════════════
 function filterNotices() {
   const q = document.getElementById('searchInput').value.toLowerCase().trim();
   if (!q) { renderNotices(); return; }
@@ -186,15 +231,19 @@ function filterNotices() {
   renderNotices(filtered);
 }
 
-// STATS - NO LOOPS
+// ═══════════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════════
 function updateStats() {
   document.getElementById('stat-total').textContent = allNotices.length;
   document.getElementById('stat-pdfs').textContent = allNotices.filter(n => n.hasPdf).length;
 }
 
+// ═══════════════════════════════════════════════════════
 // INIT
+// ═══════════════════════════════════════════════════════
 loadNotices();
-setInterval(loadNotices, 300000);
+setInterval(loadNotices, 300000); // Auto-refresh every 5 minutes
 </script>
 
 </body>
